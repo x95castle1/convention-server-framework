@@ -1,4 +1,4 @@
-module github.com/x95castle1/probes-convention-service
+module github.com/x95castle1/convention-server-framework
 
 go 1.20
 

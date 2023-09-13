@@ -6,13 +6,15 @@ import (
 	"github.com/vmware-tanzu/cartographer-conventions/webhook"
 	"go.uber.org/zap"
 	corev1 "k8s.io/api/core/v1"
+
+	"github.com/x95castle1/convention-server-framework/pkg/convention"
 )
 
 // This is more framework that wraps around true Convention. True logic
 // is in the resources folder.
 // This is boilerplate code as well.
 
-func AddConventions(logger *zap.SugaredLogger, template *corev1.PodTemplateSpec, images []webhook.ImageConfig) ([]string, error) {
+func AddConventions(logger *zap.SugaredLogger, template *corev1.PodTemplateSpec, images []webhook.ImageConfig, conventions []convention.Convention) ([]string, error) {
 
 	// These come from the PodConventionContextSpec
 	// These are the all the images
@@ -39,7 +41,7 @@ func AddConventions(logger *zap.SugaredLogger, template *corev1.PodTemplateSpec,
 
 		imageName := image.Config.Config.Labels["org.opencontainers.image.title"]
 
-		for _, o := range resources.Conventions {
+		for _, o := range conventions {
 			if !o.IsApplicable(ctx, template, imageMap) {
 				continue
 			}
