@@ -3,10 +3,9 @@ module github.com/x95castle1/convention-server-framework
 go 1.20
 
 require (
-	github.com/go-logr/logr v1.2.4
-	github.com/go-logr/zapr v1.2.4
 	github.com/google/go-cmp v0.5.9
 	github.com/vmware-tanzu/cartographer-conventions/webhook v0.5.1
+	github.com/x95castle1/probes-convention-service v0.0.0-20230913175140-1cc310849237
 	go.uber.org/zap v1.24.0
 	k8s.io/api v0.27.4
 	k8s.io/apimachinery v0.27.4
@@ -14,6 +13,7 @@ require (
 
 require (
 	github.com/CycloneDX/cyclonedx-go v0.6.0 // indirect
+	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/go-containerregistry v0.15.2 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
