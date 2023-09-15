@@ -51,7 +51,7 @@ func AddConventions(logger *zap.SugaredLogger, template *corev1.PodTemplateSpec,
 			}
 			appliedConventions = append(appliedConventions, o.GetId())
 
-			logger.Infow("Successfully applied convention", "convention", o.GetId(), "namespace", template.Namespace, "name", template.Name, "kind", "PodTemplateSpec")
+			logger.Infow("Successfully applied convention", "convention", o.GetId(), "namespace", template.ObjectMeta.Namespace, "name", template.ObjectMeta.Name, "kind", "PodTemplateSpec")
 		}
 	}
 	return appliedConventions, nil
