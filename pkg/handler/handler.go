@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+
 	"github.com/vmware-tanzu/cartographer-conventions/webhook"
 	"go.uber.org/zap"
 	corev1 "k8s.io/api/core/v1"
@@ -53,12 +54,12 @@ func AddConventions(logger *zap.SugaredLogger, template *corev1.PodTemplateSpec,
 				continue
 			}
 			if err := o.ApplyConvention(ctx, template, i, imageMap, imageName); err != nil {
-				logger.Errorw(err.Error(), "convention", o.GetId(), "name", workloadName, "kind", "PodTemplateSpec")
+				logger.Errorw(err.Error(), "convention", o.GetId(), "workloadName", workloadName, "kind", "PodTemplateSpec")
 				return nil, err
 			}
 			appliedConventions = append(appliedConventions, o.GetId())
 
-			logger.Infow("Successfully applied convention", "convention", o.GetId(), "name", workloadName, "kind", "PodTemplateSpec")
+			logger.Infow("Successfully applied convention", "convention", o.GetId(), "workloadName", workloadName, "kind", "PodTemplateSpec")
 		}
 	}
 	return appliedConventions, nil
