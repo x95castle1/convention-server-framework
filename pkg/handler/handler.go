@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-
 	"github.com/vmware-tanzu/cartographer-conventions/webhook"
 	"go.uber.org/zap"
 	corev1 "k8s.io/api/core/v1"
@@ -10,9 +9,7 @@ import (
 	"github.com/x95castle1/convention-server-framework/pkg/convention"
 )
 
-// This is more framework that wraps around true Convention. True logic
-// is in the resources folder.
-// This is boilerplate code as well.
+const UnknownWorkloadName = "Unknown"
 
 func AddConventions(logger *zap.SugaredLogger, template *corev1.PodTemplateSpec, images []webhook.ImageConfig, conventions []convention.Convention) ([]string, error) {
 
@@ -26,6 +23,12 @@ func AddConventions(logger *zap.SugaredLogger, template *corev1.PodTemplateSpec,
 
 	var appliedConventions []string
 
+	workloadName, workloadLabelExists := template.Labels["carto.run/workload-name"]
+
+	if !workloadLabelExists {
+		workloadName = UnknownWorkloadName
+	}
+
 	//Loop through every container defined on the PodTemplateSpec from the PodIntent
 	for i := range template.Spec.Containers {
 		container := &template.Spec.Containers[i]
@@ -33,7 +36,7 @@ func AddConventions(logger *zap.SugaredLogger, template *corev1.PodTemplateSpec,
 		// This is all the images that are part of the containers
 		image, ok := imageMap[container.Image]
 		if !ok {
-			logger.Warnw("image name not defined", "container", container.Name)
+			logger.Warnw("image name not defined", "container", container.Name, "workloadName", workloadName)
 			continue
 		}
 
@@ -41,17 +44,21 @@ func AddConventions(logger *zap.SugaredLogger, template *corev1.PodTemplateSpec,
 
 		imageName := image.Config.Config.Labels["org.opencontainers.image.title"]
 
+		if workloadName == UnknownWorkloadName {
+			workloadName = imageName
+		}
+
 		for _, o := range conventions {
 			if !o.IsApplicable(ctx, template, imageMap) {
 				continue
 			}
 			if err := o.ApplyConvention(ctx, template, i, imageMap, imageName); err != nil {
-				logger.Errorw(err.Error(), "convention", o.GetId(), "namespace", template.Namespace, "name", template.Name, "kind", "PodTemplateSpec")
+				logger.Errorw(err.Error(), "convention", o.GetId(), "name", workloadName, "kind", "PodTemplateSpec")
 				return nil, err
 			}
 			appliedConventions = append(appliedConventions, o.GetId())
 
-			logger.Infow("Successfully applied convention", "convention", o.GetId(), "namespace", template.ObjectMeta.Namespace, "name", template.ObjectMeta.Name, "kind", "PodTemplateSpec")
+			logger.Infow("Successfully applied convention", "convention", o.GetId(), "name", workloadName, "kind", "PodTemplateSpec")
 		}
 	}
 	return appliedConventions, nil
