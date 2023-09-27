@@ -5,7 +5,6 @@ go 1.20
 require (
 	github.com/google/go-cmp v0.5.9
 	github.com/vmware-tanzu/cartographer-conventions/webhook v0.5.1
-	github.com/x95castle1/probes-convention-service v0.0.0-20230913175140-1cc310849237
 	go.uber.org/zap v1.24.0
 	k8s.io/api v0.27.4
 	k8s.io/apimachinery v0.27.4
